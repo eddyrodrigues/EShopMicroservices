@@ -1,4 +1,6 @@
 ﻿
+using Marten.Pagination;
+
 namespace Catalog.API.Products.GetProducts
 {
     public record GetProductsQueryResult(IEnumerable<Product> Products)
@@ -7,7 +9,8 @@ namespace Catalog.API.Products.GetProducts
     }
     public record GetProductsQueryRequest(): IQuery<GetProductsQueryResult>
     {
-
+        public int PageNumber { get; set; } = 1;
+        public int PageSize { get; set; } = 10;
     }
 
     public class GetProductsQueryHandler : IQueryHandler<GetProductsQueryRequest, GetProductsQueryResult>
@@ -23,7 +26,7 @@ namespace Catalog.API.Products.GetProducts
         public async Task<GetProductsQueryResult> Handle(GetProductsQueryRequest request, CancellationToken cancellationToken)
         {
 
-            var result = await this.session.Query<Product>().ToListAsync(cancellationToken);
+            var result = await this.session.Query<Product>().ToPagedListAsync(request.PageNumber, request.PageSize, cancellationToken);
 
 
             return new GetProductsQueryResult(result);

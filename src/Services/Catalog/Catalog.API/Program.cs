@@ -1,9 +1,12 @@
+using BuildingBlocks.Behaviors;
+using BuildingBlocks.Exceptions.Handler;
 using Catalog.API.Products.CreateProduct;
 using Catalog.API.Products.DeleteProduct;
 using Catalog.API.Products.GetProductByCategory;
 using Catalog.API.Products.GetProductById;
 using Catalog.API.Products.GetProducts;
 using Catalog.API.Products.UpdateProduct;
+using FluentValidation;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -21,7 +24,11 @@ builder.Services.AddCarter(configurator: config =>
 builder.Services.AddMediatR(config =>
 {
     config.RegisterServicesFromAssembly(typeof(Program).Assembly);
+    config.AddOpenBehavior(typeof(ValidationBehavior<,>));
+    config.AddOpenBehavior(typeof(LoggingBehavior<,>));
 });
+
+builder.Services.AddValidatorsFromAssembly(typeof(Program).Assembly);
 
 builder.Services.AddMarten(config =>
 {
@@ -29,10 +36,16 @@ builder.Services.AddMarten(config =>
     //config.AutoCreateSchemaObjects
 }).UseLightweightSessions();
 
+builder.Services.AddExceptionHandler<CustomExceptionHandler>();
+
 var app = builder.Build();
+
 
 // configure  the HTTP  request pipeline
 app.MapCarter();
+app.UseExceptionHandler(opt =>
+{
 
+});
 
 app.Run();
