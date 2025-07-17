@@ -29,7 +29,7 @@ namespace Catalog.API.Products.GetProducts
             .WithName("GetProducts")
             .Produces<GetProductsResponse>(StatusCodes.Status200OK)
             .ProducesProblem(StatusCodes.Status400BadRequest)
-            .WithSummary("Get Products")
+            .WithSummary("Get Products With Pagination")
             .WithDescription("Get Products");
         }
     }
