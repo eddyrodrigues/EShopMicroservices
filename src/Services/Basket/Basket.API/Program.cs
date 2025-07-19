@@ -9,6 +9,7 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 
 builder.Services.AddScoped<IBasketRepository, BasketRepository>();
+builder.Services.Decorate<IBasketRepository, CachedBasketRepository>();
 var assembly = typeof(Program).Assembly;
 //builder.Services.AddCarter();
 builder.Services.AddCarter(new DependencyContextAssemblyCatalog([assembly]));
@@ -29,10 +30,15 @@ builder.Services.AddMarten(c =>
 
 
 builder.Services.AddHealthChecks()
-    .AddNpgSql(connectionString);
+    .AddNpgSql(connectionString)
+    .AddRedis(builder.Configuration.GetConnectionString("Redis")!, name: "Redis", tags: new[] { "redis" });
 
 builder.Services.AddExceptionHandler<CustomExceptionHandler>();
-
+builder.Services.AddStackExchangeRedisCache(options =>
+{
+    options.Configuration = builder.Configuration.GetConnectionString("Redis")!;
+    //options.InstanceName = "Basket";
+});
 
 var app = builder.Build();
 
