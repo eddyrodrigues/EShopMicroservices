@@ -12,6 +12,7 @@ public static class DependencyInjection
 
         var connectionString = configuration.GetConnectionString("Database");
 
+
         return services;
     }
 }
