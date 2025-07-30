@@ -7,6 +7,14 @@ public static class DependencyInjection
 
         //services.AddCarter();
 
+        var assembly = typeof(Program).Assembly;
+        //builder.Services.AddCarter();
+        //builder.Services.AddCarter(new DependencyContextAssemblyCatalog([assembly]));
+
+        services.AddMediatR(config =>
+        {
+            config.RegisterServicesFromAssembly(assembly);
+        });
 
         return services;
     }
@@ -15,6 +23,8 @@ public static class DependencyInjection
     {
 
         //webApplication.MapCarter();
+
+
 
 
         return webApplication;
