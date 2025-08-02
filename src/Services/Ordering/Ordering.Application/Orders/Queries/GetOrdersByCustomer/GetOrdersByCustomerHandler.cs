@@ -20,7 +20,7 @@ namespace Ordering.Application.Orders.Queries.GetOrdersByCustomer
         {
             var orders = await dbContext.Orders.Include(c => c.OrderItems)
                .AsNoTracking()
-               .Where(c => c.CustomerId == CustomerId.Of(request.CustomerId)))
+               .Where(c => c.CustomerId == CustomerId.Of(request.CustomerId))
                .OrderBy(c => c.OrderName)
                .ToListAsync(cancellationToken);
 
